@@ -46,9 +46,9 @@ public class Program
     {
         using (var scope = serviceProvider.CreateScope())
         {
-            var gridRobotService = scope.ServiceProvider.GetRequiredService<CheckBinancePriceService>();
+            var checkBinancePriceService = scope.ServiceProvider.GetRequiredService<CheckBinancePriceService>();
 
-            await gridRobotService.StartAsync();
+            await checkBinancePriceService.StartAsync();
 
         }
     }
