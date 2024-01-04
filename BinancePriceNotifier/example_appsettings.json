@@ -1,0 +1,30 @@
+﻿{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+
+  "TelegramOptions": {
+    "TelegramBotToken": "your telegram bot token.",
+    "SubscriptionIDList": [ "Type : Int Array subscribe telegram Id" ]
+  },
+  "BlockContractOptions": {
+    "ContractList": [
+        {
+          "TargetKey": "BTC",
+          "EntryPrice": 50000,
+          "ExitPrice": 40000,
+          "GridCount": 100
+        },
+        {
+          "TargetKey": "BNB",
+          "EntryPrice": 300,
+          "ExitPrice": 310,
+          "GridCount": 10
+        }
+      ]
+  }
+}
