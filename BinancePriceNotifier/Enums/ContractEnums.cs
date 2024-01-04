@@ -7,6 +7,7 @@
             BTCUSDT,
             ETHUSDT,
             SOLUSDT,
+            BNBUSDT,
         }
 
         public enum TargetKeyType

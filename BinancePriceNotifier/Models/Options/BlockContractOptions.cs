@@ -12,7 +12,7 @@ namespace BinancePriceNotifier.Models.Options
     {
         public string TargetKey { get; set; } = null!;
 
-        private TargetKeyType ContractTargetKey
+        public TargetKeyType ContractTargetKey
         {
             get
             {
@@ -27,20 +27,6 @@ namespace BinancePriceNotifier.Models.Options
             }
         }
 
-        public decimal CurrentPrice 
-        {
-            get 
-            {
-                return ContractTargetKey switch
-                {
-                    TargetKeyType.BTC => MarkPriceModel.BtcPrice,
-                    TargetKeyType.ETH => MarkPriceModel.EthPrice,
-                    TargetKeyType.SOL => MarkPriceModel.SolPrice,
-                    _ => 0
-                };
-            }
-                
-        }
 
         public decimal LastMarkPrice { get; set; }
 
@@ -73,9 +59,9 @@ namespace BinancePriceNotifier.Models.Options
             TriggeredGridPrices.Clear();
         }
     
-        public void SetLastMarkPrice()
+        public void SetLastMarkPrice(decimal currentPrice)
         {
-            LastMarkPrice = CurrentPrice;
+            LastMarkPrice = currentPrice;
         }
 
     }

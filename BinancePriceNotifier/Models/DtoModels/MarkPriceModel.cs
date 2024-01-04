@@ -11,6 +11,8 @@ namespace BinancePriceNotifier.Model.MarkPrice
         public static decimal EthPrice { get; set; }
         public static decimal SolPrice { get; set; }
 
+        public static decimal BnbPrice { get; set; }
+
         public static void UpdateMarkPrice(ConvertMarkPriceWebSocketResponse responseDate)
         {
             lock (_lock)
@@ -25,6 +27,9 @@ namespace BinancePriceNotifier.Model.MarkPrice
                         break;
                     case CryptoContractType.SOLUSDT:
                         SolPrice = Decimal.Parse(responseDate.Data.p);
+                        break;
+                    case CryptoContractType.BNBUSDT:
+                        BnbPrice = Decimal.Parse(responseDate.Data.p);
                         break;
                 }
             }
