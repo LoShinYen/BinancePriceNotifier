@@ -38,7 +38,6 @@ namespace BinancePriceNotifier.Services
 
         private async Task StartTrade()
         {
-
             while (true)
             {
                 try
@@ -83,8 +82,6 @@ namespace BinancePriceNotifier.Services
                         await _telegramHelper.SendOrderJsonData($"{msg}");
                         Program.Logger.Info($"\n{msg}");
                     }
-
-
                 }
                 catch (Exception ex)
                 {

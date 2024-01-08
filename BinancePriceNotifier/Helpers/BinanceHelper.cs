@@ -53,10 +53,6 @@ namespace BinancePriceNotifier.Helpers
 
                         MarkPriceModel.UpdateMarkPrice(responseDate);
                     }
-                    else if (result.MessageType == WebSocketMessageType.Close)
-                    {
-                        await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
-                    }
                     else if (result.MessageType == WebSocketMessageType.Binary)
                     {
                         // 這裡應對 ping 幀進行處理
@@ -68,6 +64,8 @@ namespace BinancePriceNotifier.Helpers
                         Program.Logger.Info("WebSocket closed by server. Reconnecting...");
                         await ReconnectAsync();
                     }
+
+                    Array.Clear(buffer, 0, buffer.Length);
                 }
             }
             catch (Exception ex)
@@ -94,10 +92,16 @@ namespace BinancePriceNotifier.Helpers
                     {
                         await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
                     }
-
+                    _webSocket?.Dispose();
                     _webSocket = new ClientWebSocket();
+                    Program.Logger.Info("釋放Stocket連線資源，重新建立執行個體");
                     await ConnectAsync();
-                    break;
+
+                    if (_webSocket.State == WebSocketState.Open)
+                    {
+                        Program.Logger.Info("Stocket連線建立成功");
+                        break;
+                    }
                 }
                 catch (Exception ex)
                 {

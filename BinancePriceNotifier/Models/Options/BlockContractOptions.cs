@@ -27,7 +27,6 @@ namespace BinancePriceNotifier.Models.Options
             }
         }
 
-
         public decimal LastMarkPrice { get; set; }
 
         public decimal EntryPrice { get; set; }
