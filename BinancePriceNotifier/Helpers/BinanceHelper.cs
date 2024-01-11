@@ -10,10 +10,15 @@ namespace BinancePriceNotifier.Helpers
     {
         private ClientWebSocket _webSocket = new ClientWebSocket();
         private readonly TelegramHelper _telegramHelper;
+        private System.Timers.Timer _reconnectTimer;
+        private int _isReceivingMessages = 0;
 
         public BinanceHelper(TelegramHelper telegramHelper)
         {
             _telegramHelper = telegramHelper;
+            _reconnectTimer = new System.Timers.Timer(3600000);
+            _reconnectTimer.Elapsed += async (sender, e) => await AutoReconnectAsync();
+            _reconnectTimer.AutoReset = true;
         }
 
         public async Task ConnectAsync()
@@ -37,6 +42,9 @@ namespace BinancePriceNotifier.Helpers
 
         public async Task ReceiveMessagesAsync()
         {
+            if (Interlocked.CompareExchange(ref _isReceivingMessages, 1, 0) != 0) return; 
+
+
             var buffer = new byte[1024 * 4];
             try
             {
@@ -53,11 +61,6 @@ namespace BinancePriceNotifier.Helpers
 
                         MarkPriceModel.UpdateMarkPrice(responseDate);
                     }
-                    else if (result.MessageType == WebSocketMessageType.Binary)
-                    {
-                        // 這裡應對 ping 幀進行處理
-                        await HandlePingFrameAsync();
-                    }
 
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
@@ -71,6 +74,25 @@ namespace BinancePriceNotifier.Helpers
             catch (Exception ex)
             {
                 Program.Logger.Error(ex, "Error while receiving message");
+                if (_webSocket.State == WebSocketState.Closed) { }
+                if (_webSocket.State == WebSocketState.Aborted)
+                {
+                    await ReconnectAsync();
+                }
+            }
+            finally
+            { 
+                Interlocked.Exchange(ref _isReceivingMessages, 0);
+            }
+        }
+
+        private async Task AutoReconnectAsync()
+        {
+            if (_webSocket.State == WebSocketState.Open)
+            {
+                await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Close", CancellationToken.None);
+                Program.Logger.Info("每小時自動關閉WebStocket連線");
+                await _telegramHelper.SendTelegramMsgAsync("每小時自動關閉WebStocket連線");
                 await ReconnectAsync();
             }
         }
@@ -100,6 +122,7 @@ namespace BinancePriceNotifier.Helpers
                     if (_webSocket.State == WebSocketState.Open)
                     {
                         Program.Logger.Info("Stocket連線建立成功");
+                        _ = Task.Run(() => ReceiveMessagesAsync());
                         break;
                     }
                 }
@@ -118,18 +141,5 @@ namespace BinancePriceNotifier.Helpers
                 await _telegramHelper.SendErrorMessage("Max reconnect attempts reached. Connection failed.");
             }
         }
-
-        /// <summary>
-        /// Binance改為每10分鐘發送一次ping frame，如果10分鐘內沒有收到pong frame，則斷開連接
-        /// </summary>
-        /// <returns></returns>
-        private async Task HandlePingFrameAsync()
-        {
-            // 回應 pong 幀
-            await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes("Pong")), WebSocketMessageType.Binary, true, CancellationToken.None);
-            Program.Logger.Info("Sent pong frame in response to ping frame");
-        }
-
-
     }
 }

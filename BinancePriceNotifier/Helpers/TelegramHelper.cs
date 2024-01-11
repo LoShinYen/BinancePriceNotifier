@@ -23,7 +23,7 @@ namespace BinancePriceNotifier.Helpers
             _developer = options.Value.SubscriptionIDList;
         }
 
-        public async Task SendOrderJsonData(string message)
+        public async Task SendTelegramMsgAsync(string message)
         {
             await SendMessageToDevelopers($"{message}");
         }

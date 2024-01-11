@@ -79,7 +79,7 @@ namespace BinancePriceNotifier.Services
                         }
                         string msg = $"幣別 : {item.TargetKey},\n價格變化 :{isRaise} ,\n目前價格 : {currentPrice}";
                         Console.WriteLine($"現在時間 {DateTime.Now}\n{msg}");
-                        await _telegramHelper.SendOrderJsonData($"{msg}");
+                        await _telegramHelper.SendTelegramMsgAsync($"{msg}");
                         Program.Logger.Info($"\n{msg}");
                     }
                 }
