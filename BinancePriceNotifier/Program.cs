@@ -1,6 +1,7 @@
 ﻿using BinancePriceNotifier.Helpers;
 using BinancePriceNotifier.Models.Options;
 using BinancePriceNotifier.Services;
+using BlockTradeStrategy.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;

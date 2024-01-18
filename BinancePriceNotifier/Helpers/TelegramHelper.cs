@@ -4,7 +4,7 @@ using Telegram.Bot;
 
 namespace BinancePriceNotifier.Helpers
 {
-    internal class TelegramHelper
+    public class TelegramHelper
     {
         private static TelegramBotClient? _telegramClient;
         private static List<long> _developer = new List<long>();

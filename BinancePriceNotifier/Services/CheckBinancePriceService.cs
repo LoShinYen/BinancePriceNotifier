@@ -1,6 +1,7 @@
 ﻿using BinancePriceNotifier.Helpers;
 using BinancePriceNotifier.Model.MarkPrice;
 using BinancePriceNotifier.Models.Options;
+using BlockTradeStrategy.Helpers;
 using Microsoft.Extensions.Options;
 using static BinancePriceNotifier.Enums.ContractEnums;
 
