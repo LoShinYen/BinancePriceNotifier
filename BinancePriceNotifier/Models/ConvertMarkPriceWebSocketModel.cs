@@ -1,8 +1,8 @@
 ﻿using static BinancePriceNotifier.Enums.ContractEnums;
 
-namespace BinancePriceNotifier.Models.ViewModels
+namespace BinancePriceNotifier.Models
 {
-    public class ConvertMarkPriceWebSocketResponse
+    public class ConvertMarkPriceWebSocketModel
     {
         public string Stream { get; set; } = string.Empty;
         public Data Data { get; set; } = new Data();

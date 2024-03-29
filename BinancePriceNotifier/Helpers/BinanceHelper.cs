@@ -1,6 +1,6 @@
 ﻿using BinancePriceNotifier.Helpers;
 using BinancePriceNotifier.Model.MarkPrice;
-using BinancePriceNotifier.Models.ViewModels;
+using BinancePriceNotifier.Models;
 using Newtonsoft.Json;
 using System.Net.WebSockets;
 using System.Text;
@@ -67,7 +67,7 @@ namespace BlockTradeStrategy.Helpers
                     if (result.MessageType == WebSocketMessageType.Text)
                     {
                         var response = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                        var responseDate = JsonConvert.DeserializeObject<ConvertMarkPriceWebSocketResponse>(response);
+                        var responseDate = JsonConvert.DeserializeObject<ConvertMarkPriceWebSocketModel>(response);
 
                         if (responseDate == null) continue;
 

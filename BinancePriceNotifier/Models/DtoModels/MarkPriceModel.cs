@@ -1,4 +1,4 @@
-﻿using BinancePriceNotifier.Models.ViewModels;
+﻿using BinancePriceNotifier.Models;
 using static BinancePriceNotifier.Enums.ContractEnums;
 
 namespace BinancePriceNotifier.Model.MarkPrice
@@ -13,7 +13,7 @@ namespace BinancePriceNotifier.Model.MarkPrice
 
         public static decimal BnbPrice { get; set; }
 
-        public static void UpdateMarkPrice(ConvertMarkPriceWebSocketResponse responseDate)
+        public static void UpdateMarkPrice(ConvertMarkPriceWebSocketModel responseDate)
         {
             lock (_lock)
             {
