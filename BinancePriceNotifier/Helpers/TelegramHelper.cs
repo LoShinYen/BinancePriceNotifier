@@ -3,12 +3,12 @@ using Telegram.Bot;
 
 namespace BinancePriceNotifier.Helpers
 {
-    public class TelegramHelper
+    internal class TelegramHelper
     {
         private static TelegramBotClient? _telegramClient;
         private static List<long> _developer = new List<long>();
 
-        public TelegramHelper(IOptions<TelegramOptions> options)
+        internal TelegramHelper(IOptions<TelegramOptions> options)
         {
             var token = options.Value.TelegramBotToken;
             if (string.IsNullOrEmpty(token))
@@ -22,12 +22,12 @@ namespace BinancePriceNotifier.Helpers
             _developer = options.Value.SubscriptionIDList;
         }
 
-        public async Task SendTelegramMsgAsync(string message)
+        internal async Task SendTelegramMsgAsync(string message)
         {
             await SendMessageToDevelopers($"{message}");
         }
 
-        public async Task SendErrorMessage(string message)
+        internal async Task SendErrorMessage(string message)
         {
             await SendMessageToDevelopers($"錯誤訊息 : {message}");
         }

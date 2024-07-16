@@ -1,8 +1,8 @@
 ﻿namespace BinancePriceNotifier.Enums
 {
-    public class ContractEnums
+    internal class ContractEnums
     {
-        public enum CryptoContractType
+        internal enum CryptoContractType
         {
             BTCUSDT,
             ETHUSDT,
@@ -10,7 +10,7 @@
             BNBUSDT,
         }
 
-        public enum TargetKeyType
+        internal enum TargetKeyType
         {
             BTC = 0,
             ETH = 1,
