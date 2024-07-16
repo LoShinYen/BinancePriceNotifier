@@ -3,7 +3,6 @@ using BinancePriceNotifier.Model.MarkPrice;
 using BinancePriceNotifier.Models.Options;
 using BlockTradeStrategy.Helpers;
 using Microsoft.Extensions.Options;
-using static BinancePriceNotifier.Enums.ContractEnums;
 
 namespace BinancePriceNotifier.Services
 {
@@ -13,14 +12,14 @@ namespace BinancePriceNotifier.Services
         private readonly TelegramHelper _telegramHelper;
         private List<BlockChainContract> _contractList;
 
-        public CheckBinancePriceService( BinanceHelper binanceHelper, TelegramHelper telegramHelper , IOptions<BlockContractOptions> options)
+        internal CheckBinancePriceService( BinanceHelper binanceHelper, TelegramHelper telegramHelper , IOptions<BlockContractOptions> options)
         {
             _binanceHelper = binanceHelper;
             _telegramHelper = telegramHelper;
             _contractList = options.Value.ContractList;
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken = default)
+        internal async Task StartAsync(CancellationToken cancellationToken = default)
         {
             try
             {
@@ -31,7 +30,7 @@ namespace BinancePriceNotifier.Services
             }
             catch (Exception ex)
             {
-                Program.Logger.Error($"BinanceWebSocketService StartAsync Error : {ex.Message}");
+                LoggerHelper.LogError($"BinanceWebSocketService StartAsync Error : {ex.Message}");
             }
 
             await StartTrade();
@@ -47,7 +46,7 @@ namespace BinancePriceNotifier.Services
                 }
                 catch (Exception ex)
                 {
-                    Program.Logger.Error($"GridRobotService Error : {ex.Message}");
+                    LoggerHelper.LogError($"GridRobotService Error : {ex.Message}");
                 }
                 finally
                 {
@@ -81,12 +80,12 @@ namespace BinancePriceNotifier.Services
                         string msg = $"幣別 : {item.TargetKey},\n價格變化 :{isRaise} ,\n目前價格 : {currentPrice}";
                         Console.WriteLine($"現在時間 {DateTime.Now}\n{msg}");
                         await _telegramHelper.SendTelegramMsgAsync($"{msg}");
-                        Program.Logger.Info($"\n{msg}");
+                        LoggerHelper.LogInfo($"\n{msg}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Program.Logger.Error($"Error : {ex.Message}");
+                    LoggerHelper.LogError($"Error : {ex.Message}");
                 }
                 finally
                 {

@@ -1,17 +1,11 @@
-﻿using BinancePriceNotifier.Helpers;
-using BinancePriceNotifier.Models.Options;
-using BinancePriceNotifier.Services;
-using BlockTradeStrategy.Helpers;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NLog;
 
 public class Program
 {
-    internal static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     static async Task Main(string[] args)
     {
-        Logger.Info("Application is running");
+        LoggerHelper.LogInfo("Application is running");
         var configuration = BuildConfiguration();
         var services = ConfigureServices(configuration);
         var serviceProvider = services.BuildServiceProvider();

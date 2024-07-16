@@ -1,7 +1,4 @@
-﻿using BinancePriceNotifier.Model.MarkPrice;
-using static BinancePriceNotifier.Enums.ContractEnums;
-
-namespace BinancePriceNotifier.Models.Options
+﻿namespace BinancePriceNotifier.Models.Options
 {
     internal class BlockContractOptions
     {

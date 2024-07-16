@@ -1,6 +1,4 @@
-﻿using static BinancePriceNotifier.Enums.ContractEnums;
-
-namespace BinancePriceNotifier.Models
+﻿namespace BinancePriceNotifier.Models
 {
     public class ConvertMarkPriceWebSocketModel
     {

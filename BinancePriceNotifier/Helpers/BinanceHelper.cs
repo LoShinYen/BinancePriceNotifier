@@ -1,13 +1,8 @@
-﻿using BinancePriceNotifier.Helpers;
-using BinancePriceNotifier.Model.MarkPrice;
-using BinancePriceNotifier.Models;
-using Newtonsoft.Json;
-using System.Net.WebSockets;
-using System.Text;
+﻿using System.Net.WebSockets;
 
 namespace BlockTradeStrategy.Helpers
 {
-    public class BinanceHelper
+    internal class BinanceHelper
     {
         private ClientWebSocket _webSocket = new ClientWebSocket();
         private readonly TelegramHelper _telegramHelper;
@@ -17,7 +12,7 @@ namespace BlockTradeStrategy.Helpers
         private int _isReceivingMessages = 0;
         private const int _maxRetryCount = 10;
 
-        public BinanceHelper(TelegramHelper telegramHelper)
+        internal BinanceHelper(TelegramHelper telegramHelper)
         {
             _telegramHelper = telegramHelper;
             _reconnectTimer = new System.Timers.Timer(3600000);
@@ -25,11 +20,11 @@ namespace BlockTradeStrategy.Helpers
             _reconnectTimer.AutoReset = true;
         }
 
-        public async Task ConnectAsync()
+        internal async Task ConnectAsync()
         {
             _reconnectTimer.Start();
 
-            Program.Logger.Info("開始連接WebStocket連線");
+            LoggerHelper.LogInfo("開始連接WebStocket連線");
             string btc = "btcusdt@aggTrade";
             string eth = "ethusdt@aggTrade";
             string sol = "solusdt@aggTrade";
@@ -40,19 +35,19 @@ namespace BlockTradeStrategy.Helpers
                 await _webSocket.ConnectAsync(new Uri(_webSocketEndpoint), CancellationToken.None);
                 if (_webSocket.State == WebSocketState.Open)
                 {
-                    Program.Logger.Info("WebStocket連線成功");
+                    LoggerHelper.LogInfo("WebStocket連線成功");
                     await _telegramHelper.SendTelegramMsgAsync("WebStocket連線成功");
                 }
             }
             catch (Exception ex)
             {
-                Program.Logger.Error($"Error while connecting to websocket , Reason : {ex.Message}");
+                LoggerHelper.LogInfo($"Error while connecting to websocket , Reason : {ex.Message}");
                 await _telegramHelper.SendErrorMessage($"Error while connecting to websocket , Reason : {ex.Message}");
                 await ReconnectAsync();
             }
         }
 
-        public async Task ReceiveMessagesAsync()
+        internal async Task ReceiveMessagesAsync()
         {
             if (Interlocked.CompareExchange(ref _isReceivingMessages, 1, 0) != 0) return;
 
@@ -76,7 +71,7 @@ namespace BlockTradeStrategy.Helpers
 
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        Program.Logger.Info("WebSocket closed by server. Reconnecting...");
+                        LoggerHelper.LogInfo("WebSocket closed by server. Reconnecting...");
                         await ReconnectAsync();
                     }
 
@@ -85,7 +80,7 @@ namespace BlockTradeStrategy.Helpers
             }
             catch (Exception ex)
             {
-                Program.Logger.Error($"Error while receiving message , Reason : {ex.Message}");
+                LoggerHelper.LogInfo($"Error while receiving message , Reason : {ex.Message}");
                 await _telegramHelper.SendErrorMessage($"Error while receiving message , Reason : {ex.Message}");
 
                 if (_webSocket.State == WebSocketState.Aborted)
@@ -108,7 +103,7 @@ namespace BlockTradeStrategy.Helpers
                 if (_webSocket.State == WebSocketState.Open)
                 {
                     await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Close", CancellationToken.None);
-                    Program.Logger.Info("每小時自動關閉WebStocket連線");
+                    LoggerHelper.LogInfo("每小時自動關閉WebStocket連線");
                     await _telegramHelper.SendTelegramMsgAsync("每小時自動關閉WebStocket連線");
                 }
 
@@ -121,7 +116,7 @@ namespace BlockTradeStrategy.Helpers
                 {
                     autoReconnectCount++;
                     var msg = $"第{autoReconnectCount} 次 WebSocket 關閉失敗，無法重新連線";
-                    Program.Logger.Error(msg);
+                    LoggerHelper.LogError(msg);
                     await _telegramHelper.SendErrorMessage(msg);
                     int delay = (int)Math.Pow(2, autoReconnectCount) * 1000;
                     await Task.Delay(delay);
@@ -133,19 +128,19 @@ namespace BlockTradeStrategy.Helpers
         /// 重新啟動 WebSocket 連接
         /// </summary>
         /// <returns></returns>
-        public async Task ReconnectAsync()
+        internal async Task ReconnectAsync()
         {
-            Program.Logger.Info("開始進行重新連接WebStocket連線流程");
+            LoggerHelper.LogInfo("開始進行重新連接WebStocket連線流程");
             int retryCount = 0;
 
             while (retryCount < _maxRetryCount)
             {
-                Program.Logger.Info($"開始第一次嘗試重建連線 : {retryCount + 1}");
+                LoggerHelper.LogInfo($"開始第一次嘗試重建連線 : {retryCount + 1}");
                 try
                 {
                     _webSocket?.Dispose();
                     _webSocket = new ClientWebSocket();
-                    Program.Logger.Info("釋放Stocket連線資源，重新建立執行個體");
+                    LoggerHelper.LogInfo("釋放Stocket連線資源，重新建立執行個體");
                     await ConnectAsync();
 
                     if (_webSocket.State == WebSocketState.Open)
@@ -162,7 +157,7 @@ namespace BlockTradeStrategy.Helpers
                 {
                     retryCount++;
                     int delay = (int)Math.Pow(2, retryCount) * 1000;
-                    Program.Logger.Error($"Reconnect attempt {retryCount} failed: {ex.Message}. Retrying in {delay}ms.");
+                    LoggerHelper.LogError($"Reconnect attempt {retryCount} failed: {ex.Message}. Retrying in {delay}ms.");
                     await _telegramHelper.SendErrorMessage($"Reconnect attempt {retryCount} failed: {ex.Message}. Retrying in {delay}ms.");
                     await Task.Delay(delay);
                 }
@@ -170,7 +165,7 @@ namespace BlockTradeStrategy.Helpers
 
             if (retryCount == _maxRetryCount)
             {
-                Program.Logger.Error("Max reconnect attempts reached. Connection failed.");
+                LoggerHelper.LogError("Max reconnect attempts reached. Connection failed.");
                 await _telegramHelper.SendErrorMessage("Max reconnect attempts reached. Connection failed.");
             }
         }

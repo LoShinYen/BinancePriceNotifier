@@ -1,5 +1,4 @@
-﻿using BinancePriceNotifier.Models.Options;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Telegram.Bot;
 
 namespace BinancePriceNotifier.Helpers
@@ -14,7 +13,7 @@ namespace BinancePriceNotifier.Helpers
             var token = options.Value.TelegramBotToken;
             if (string.IsNullOrEmpty(token))
             {
-                Program.Logger.Error("Telegram bot token is not configured.");
+                LoggerHelper.LogError("Telegram bot token is not configured.");
             }
             else if (_telegramClient == null)
             {
@@ -47,7 +46,7 @@ namespace BinancePriceNotifier.Helpers
             }
             catch (Exception ex)
             {
-                Program.Logger.Error(ex, "Error while sending message to telegram");
+                LoggerHelper.LogError($"Error while sending message to telegram , {ex.Message}");
             }
         }
     }
